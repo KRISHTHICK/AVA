@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agent-Avan — Legal Contracts Platform</title>
+  <!-- Tailwind Play CDN for quick prototyping -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#334155',
+            accent: '#0ea5a4',
+            soft: '#f8fafc'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Simple custom styles for demo */
+    .sidebar:hover { transform: translateX(0); }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 10px 25px rgba(2,6,23,0.15); }
+    .ticker { animation: scroll 18s linear infinite; white-space: nowrap; }
+    @keyframes scroll { 0% { transform: translateX(100%);} 100% { transform: translateX(-100%);} }
+    /* mobile adjustments */
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; bottom: 0; left: 0; right: 0; display:flex; justify-content:space-around; padding:6px 10px; }
+      .sidebar-desktop { display:none; }
+    }
+  </style>
+</head>
+<body class="bg-soft text-slate-800 min-h-screen">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r sidebar-desktop">
+      <div class="p-4 flex items-center gap-3 border-b">
+        <div class="w-10 h-10 rounded-2xl bg-accent flex items-center justify-center text-white font-bold">AA</div>
+        <div>
+          <div class="font-semibold text-lg">Agent-Avan</div>
+          <div class="text-xs text-slate-500">Legal Contracts</div>
+        </div>
+      </div>
+      <nav class="p-4 space-y-1">
+        <a class="flex items-center gap-3 p-2 rounded hover:bg-gray-50" href="#"><svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7v13h6V3H3v4zM15 3v18h6V7h-6z"></path></svg> Dashboard</a>
+        <a class="flex items-center gap-3 p-2 rounded hover:bg-gray-50" href="#">Contracts</a>
+        <a class="flex items-center gap-3 p-2 rounded hover:bg-gray-50" href="#">Laws & Policies</a>
+        <a class="flex items-center gap-3 p-2 rounded hover:bg-gray-50" href="#">Verification</a>
+        <a class="flex items-center gap-3 p-2 rounded hover:bg-gray-50" href="#">Notifications</a>
+        <a class="flex items-center gap-3 p-2 rounded hover:bg-gray-50" href="#">Admin</a>
+      </nav>
+      <div class="mt-auto p-4 border-t">
+        <div class="text-xs text-slate-500">Signed in as</div>
+        <div class="font-medium">user@example.com</div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1 p-6 overflow-auto">
+      <!-- Top nav -->
+      <header class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <button id="sidebarToggle" class="p-2 rounded bg-white border shadow-sm md:hidden">☰</button>
+          <div class="relative">
+            <input id="search" type="search" placeholder="Search contracts, policies..." class="pl-10 pr-4 py-2 rounded-lg border w-96">
+            <svg class="w-5 h-5 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35"></path><path d="M11 19a8 8 0 100-16 8 8 0 000 16z"></path></svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="relative w-72 h-8 bg-white rounded flex items-center overflow-hidden border">
+            <div class="ticker px-4 text-xs text-slate-600">Latest update: GST rule updated — effective 2025-09-22 • New ISO patch released • Vendor agreement template v3</div>
+          </div>
+          <button id="notifBtn" class="p-2 rounded bg-white border">🔔</button>
+          <div class="flex items-center gap-3">
+            <div class="text-sm">Hi, User</div>
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent text-white flex items-center justify-center">U</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Top panels -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="col-span-2 bg-white rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-semibold text-lg">Upload / Create Document</h2>
+            <div class="flex gap-2">
+              <button class="px-3 py-1 border rounded">New</button>
+              <button id="uploadBtn" class="px-3 py-1 bg-accent text-white rounded">Upload</button>
+            </div>
+          </div>
+          <div id="uploader" class="border-2 border-dashed rounded p-6 text-center">
+            <p class="text-slate-500">Drag & drop a PDF/DOCX or click to upload</p>
+            <input id="fileInput" type="file" accept=".pdf,.docx,.doc,.png,.jpg" class="mt-4 mx-auto block"/>
+            <div id="uploadSteps" class="mt-6 grid grid-cols-4 gap-4 text-sm">
+              <div class="p-3 bg-gray-50 rounded text-center step" data-step="1">Ingested<br><span class="text-xs text-slate-400">Waiting</span></div>
+              <div class="p-3 bg-gray-50 rounded text-center step" data-step="2">Authenticity<br><span class="text-xs text-slate-400">Waiting</span></div>
+              <div class="p-3 bg-gray-50 rounded text-center step" data-step="3">Policy Map<br><span class="text-xs text-slate-400">Waiting</span></div>
+              <div class="p-3 bg-gray-50 rounded text-center step" data-step="4">Verification<br><span class="text-xs text-slate-400">Waiting</span></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="bg-white p-4 rounded-2xl shadow-sm">
+          <h3 class="font-medium mb-3">Quick Actions</h3>
+          <ul class="space-y-2 text-sm">
+            <li><button class="w-full text-left p-2 rounded hover:bg-gray-50 card-hover">Verify selected doc</button></li>
+            <li><button class="w-full text-left p-2 rounded hover:bg-gray-50 card-hover">Compare with GST</button></li>
+            <li><button class="w-full text-left p-2 rounded hover:bg-gray-50 card-hover">Share & Approve</button></li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- Dashboard grid -->
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="col-span-2 grid grid-cols-1 gap-4">
+          <div class="bg-white rounded-2xl p-4 shadow-sm">
+            <h3 class="font-semibold mb-3">Contracts Overview</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 bg-white rounded-lg border card-hover">
+                <div class="text-xs text-slate-400">Active Contracts</div>
+                <div class="text-2xl font-bold">128</div>
+              </div>
+              <div class="p-4 bg-white rounded-lg border card-hover">
+                <div class="text-xs text-slate-400">Pending Approvals</div>
+                <div class="text-2xl font-bold text-amber-600">12</div>
+              </div>
+              <div class="p-4 bg-white rounded-lg border card-hover">
+                <div class="text-xs text-slate-400">Laws Monitored</div>
+                <div class="text-2xl font-bold">24</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 shadow-sm">
+            <h3 class="font-semibold mb-3">Recent Verifications</h3>
+            <div id="recentList" class="space-y-3">
+              <!-- dynamic items -->
+            </div>
+          </div>
+        </div>
+
+        <aside class="bg-white rounded-2xl p-4 shadow-sm">
+          <h3 class="font-semibold mb-3">Live Chat & Suggestions</h3>
+          <div class="h-72 border rounded p-2 overflow-auto" id="chatPreview">
+            <div class="text-xs text-slate-500">Chat history will appear here.</div>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <input id="chatInput" class="flex-1 p-2 border rounded" placeholder="Ask the AI about this document...">
+            <button id="sendChat" class="px-4 py-2 bg-primary text-white rounded">Ask</button>
+          </div>
+        </aside>
+      </section>
+
+      <!-- Footer area with step progress -->
+      <footer class="mt-6 text-sm text-slate-500">Agent-Avan prototype • Not legal advice • Demo only</footer>
+
+    </main>
+  </div>
+
+  <!-- Floating chatbot -->
+  <div id="chatWidget" class="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-accent text-white flex items-center justify-center shadow-lg cursor-pointer z-50">
+    <div id="chatIcon">💬</div>
+  </div>
+
+  <!-- Chat overlay -->
+  <div id="chatOverlay" class="fixed inset-0 bg-black bg-opacity-40 hidden z-40">
+    <div class="absolute right-6 bottom-6 w-96 max-h-[80vh] bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden">
+      <div class="p-3 border-b flex items-center justify-between">
+        <div class="font-semibold">Agent-Avan Chat</div>
+        <div class="flex gap-2">
+          <button id="minChat" class="px-2">_</button>
+          <button id="closeChat" class="px-2">✕</button>
+        </div>
+      </div>
+      <div id="chatArea" class="flex-1 p-3 overflow-auto space-y-3">
+        <!-- messages -->
+      </div>
+      <div class="p-3 border-t flex gap-2">
+        <input id="chatBox" type="text" class="flex-1 p-2 border rounded" placeholder="Type or use mic...">
+        <button id="sendBtn" class="px-4 py-2 bg-accent text-white rounded">Send</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Simple JS to wire up UI interactions and mock API calls
+  const fileInput = document.getElementById('fileInput');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const uploadSteps = document.getElementById('uploadSteps');
+  const recentList = document.getElementById('recentList');
+
+  function setStep(step, status, text) {
+    const el = uploadSteps.querySelector('[data-step="'+step+'"]');
+    if(!el) return;
+    el.classList.remove('bg-gray-50','bg-green-50','bg-yellow-50','bg-red-50');
+    if(status==='ok') el.classList.add('bg-green-50'), el.querySelector('span').innerText = text||'Done';
+    else if(status==='warn') el.classList.add('bg-yellow-50'), el.querySelector('span').innerText = text||'Check';
+    else if(status==='err') el.classList.add('bg-red-50'), el.querySelector('span').innerText = text||'Error';
+    else el.classList.add('bg-gray-50'), el.querySelector('span').innerText = text||'Waiting';
+  }
+
+  uploadBtn.addEventListener('click', ()=> fileInput.click());
+  fileInput.addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    // mock upload and pipeline
+    setStep(1,'ok','Ingested');
+    setStep(2,'err','Checking...');
+    // send to backend (mock)
+    const form = new FormData(); form.append('file', file);
+    try {
+      const res = await fetch('/api/upload', { method:'POST', body: form });
+      const data = await res.json();
+      setStep(2,'ok','Auth ok');
+      setStep(3,'ok','Policy mapped');
+      setStep(4,'ok','Verified');
+      // append to recent
+      const item = document.createElement('div');
+      item.className = 'p-3 border rounded';
+      item.innerHTML = '<div class="font-medium">'+data.title+'</div><div class="text-xs text-slate-500">ID: '+data.unique_id+'</div>';
+      recentList.prepend(item);
+    } catch(err) {
+      setStep(2,'err','Auth failed');
+    }
+  });
+
+  // Chat widget behavior
+  const chatWidget = document.getElementById('chatWidget');
+  const chatOverlay = document.getElementById('chatOverlay');
+  const closeChat = document.getElementById('closeChat');
+  const minChat = document.getElementById('minChat');
+  const chatArea = document.getElementById('chatArea');
+  const sendBtn = document.getElementById('sendBtn');
+  const chatBox = document.getElementById('chatBox');
+
+  chatWidget.addEventListener('click', ()=> {
+    chatOverlay.classList.remove('hidden');
+  });
+  closeChat.addEventListener('click', ()=> chatOverlay.classList.add('hidden'));
+  minChat.addEventListener('click', ()=> {
+    // minimize -> show small bar
+    chatOverlay.classList.add('hidden');
+    alert('Minimized (mock) — will keep in future implementation.');
+  });
+
+  sendBtn.addEventListener('click', async ()=>{
+    const v = chatBox.value.trim(); if(!v) return;
+    const userMsg = document.createElement('div'); userMsg.className='text-right'; userMsg.innerHTML = '<div class="inline-block bg-accent text-white p-2 rounded">'+v+'</div>';
+    chatArea.appendChild(userMsg);
+    chatBox.value='';
+    // mock API
+    const bot = document.createElement('div'); bot.innerHTML = '<div class="inline-block bg-gray-100 p-2 rounded">Thinking...</div>';
+    chatArea.appendChild(bot);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    const res = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({q:v}) });
+    const j = await res.json();
+    bot.innerHTML = '<div class="inline-block bg-gray-100 p-2 rounded">'+j.reply+'</div>';
+    chatArea.scrollTop = chatArea.scrollHeight;
+  });
+
+  // notification demo
+  document.getElementById('notifBtn').addEventListener('click', ()=> alert('Open Notifications (demo)'));
+</script>
+</body>
+</html>
